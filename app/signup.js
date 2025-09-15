@@ -1,18 +1,32 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { registerUser } from "@/api"; // ✅ tumhari API file
+import { useAuth } from "@/context/AuthContext"; // ✅ Auth context
 import { useRouter } from "expo-router";
+import { useState } from "react";
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function SignupScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { login } = useAuth(); // ✅ context function
 
-  const handleSignup = () => {
-    console.log("Name:", name);
-    console.log("Email:", email);
-    console.log("Password:", password);
-    router.push("/"); // ✅ Sign up ke baad Home (index.js) pe bhej do
+  const handleSignup = async () => {
+    try {
+      const res = await registerUser(name, email, password);
+
+      if (res?.token) {
+        // ✅ Save user + token in context
+        login(res.user, res.token);
+
+        // ✅ Redirect to home/tabs
+        router.replace("/");
+      } else {
+        Alert.alert("Signup Failed", res?.message || "Could not register");
+      }
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
   };
 
   return (
@@ -21,7 +35,7 @@ export default function SignupScreen() {
 
       <TextInput
         style={styles.input}
-        placeholder="Full Name"
+        placeholder="Enter Name"
         value={name}
         onChangeText={setName}
       />

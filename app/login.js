@@ -1,16 +1,31 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { loginUser } from "@/api"; // ✅ tumhari API file
+import { useAuth } from "@/context/AuthContext"; // ✅ Auth context
 import { useRouter } from "expo-router";
+import { useState } from "react";
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { login } = useAuth(); // ✅ context function
 
-  const handleLogin = () => {
-    console.log("Email:", email);
-    console.log("Password:", password);
-    router.push("/"); // Login ke baad Home (index.js) pe bhej do
+  const handleLogin = async () => {
+    try {
+      const res = await loginUser(email, password);
+
+      if (res?.token) {
+        // ✅ Save user + token in context
+        login(res.user, res.token);
+
+        // ✅ Redirect to home/tabs
+        router.replace("/");
+      } else {
+        Alert.alert("Login Failed", res?.message || "Invalid credentials");
+      }
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
   };
 
   return (
