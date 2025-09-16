@@ -1,16 +1,10 @@
 import { createContext, useContext, useState } from "react";
 
-// ✅ Default values added to prevent undefined errors
-const AuthContext = createContext({
-  user: null,
-  token: null,
-  login: () => {},
-  logout: () => {},
-});
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);   // user details
-  const [token, setToken] = useState(null); // auth token
+  const [user, setUser] = useState(null);   // store user info
+  const [token, setToken] = useState(null); // store JWT / auth token
 
   const login = (userData, tokenData) => {
     setUser(userData);

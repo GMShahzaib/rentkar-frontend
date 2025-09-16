@@ -4,7 +4,7 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 
-import { AuthProvider, useAuth } from "@/context/AuthContext"; // ✅ import
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 function RootNavigator() {
@@ -12,7 +12,7 @@ function RootNavigator() {
 
   return (
     <Stack screenOptions={{ headerTitleAlign: "center" }}>
-      {/* ✅ Agar user login hai to tabs dikhaye */}
+      {/* ✅ Show tabs if user is logged in */}
       {user ? (
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       ) : (

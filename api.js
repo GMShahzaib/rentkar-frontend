@@ -1,31 +1,64 @@
-const API_URL = process.env.EXPO_PUBLIC_API_URL || "https://626dq8sb-8000.inc1.devtunnels.ms";
+import axios from "axios";
 
-// ✅ Login API
-export const loginUser = async (email, password) => {
-  const response = await fetch(`${API_URL}/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
+// 🔗 Apna backend base URL yahan daalo (mobile app ke liye local IP use karo)
+const API = axios.create({
+  baseURL: "http://192.168.0.102:5000/api/auth", // 👈 apna IP + port lagao
+});
 
-  if (!response.ok) {
-    throw new Error("Login failed");
+// ✅ Register new user
+export const registerUser = async (name, email, password) => {
+  try {
+    const res = await API.post("/register", { name, email, password });
+    return res.data;
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || "Something went wrong",
+    };
   }
-
-  return response.json();
 };
 
-// ✅ Register API
-export const registerUser = async (name, email, password) => {
-  const response = await fetch(`${API_URL}/auth/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password }),
-  });
-
-  if (!response.ok) {
-    throw new Error("Registration failed");
+// ✅ Login user
+export const loginUser = async (email, password) => {
+  try {
+    const res = await API.post("/login", { email, password });
+    return res.data;
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || "Something went wrong",
+    };
   }
+};
 
-  return response.json();
+// ✅ Example: Send verification email (optional)
+export const sendVerificationEmail = async (token) => {
+  try {
+    const res = await API.post(
+      "/send-verification-email",
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || "Something went wrong",
+    };
+  }
+};
+
+// ✅ Example: Verify email (optional)
+export const verifyEmail = async (token) => {
+  try {
+    const res = await API.post("/verify-email", { token });
+    return res.data;
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.message || "Something went wrong",
+    };
+  }
 };
