@@ -16,22 +16,23 @@ interface RegisterScreenProps {
     password: string;
     name: string;
     profilePicture?: string;
-  }) => void;
+  }) => Promise<void>;
   onNavigateToLogin: () => void;
   onBack: () => void;
 }
 
-const RegisterScreen: React.FC<RegisterScreenProps> = ({ 
-  onRegister, 
-  onNavigateToLogin, 
-  onBack 
+const RegisterScreen: React.FC<RegisterScreenProps> = ({
+  onRegister,
+  onNavigateToLogin,
+  onBack
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!email || !password || !name) {
       Alert.alert('Error', 'Please fill in all required fields');
       return;
@@ -47,12 +48,19 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({
       return;
     }
 
-    onRegister({
-      email,
-      password,
-      name,
-      profilePicture: profilePicture || undefined,
-    });
+    setIsLoading(true);
+    try {
+      await onRegister({
+        email,
+        password,
+        name,
+        profilePicture: profilePicture || undefined,
+      });
+    } catch (error) {
+      // Error handling is done in the parent component
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -101,12 +109,18 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({
             keyboardType="url"
           />
 
-          <TouchableOpacity style={styles.button} onPress={handleRegister}>
-            <Text style={styles.buttonText}>Register</Text>
+          <TouchableOpacity
+            style={[styles.button, isLoading && styles.buttonDisabled]}
+            onPress={handleRegister}
+            disabled={isLoading}
+          >
+            <Text style={styles.buttonText}>
+              {isLoading ? 'Creating Account...' : 'Register'}
+            </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={styles.linkButton} 
+          <TouchableOpacity
+            style={styles.linkButton}
             onPress={onNavigateToLogin}
           >
             <Text style={styles.linkText}>
@@ -115,8 +129,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
-  );
+    </SafeAreaView>);
 };
 
 const styles = StyleSheet.create({
@@ -167,6 +180,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  buttonDisabled: {
+    backgroundColor: '#cccccc',
   },
   linkButton: {
     marginTop: 20,

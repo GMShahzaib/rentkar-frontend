@@ -4,14 +4,10 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-interface User {
-  email: string;
-  name: string;
-  profilePicture?: string;
-}
+import { User } from '../services/api/AuthService';
 
 interface HomeScreenProps {
   user: User | null;
@@ -25,14 +21,27 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   onNavigateToLogin, 
   onNavigateToRegister, 
   onLogout 
-}) => {
+}) => {  
   if (user) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.content}>
           <Text style={styles.title}>Welcome Home!</Text>
           
-          <View style={styles.userCard}>            
+          <View style={styles.userCard}>
+            {user.profile_picture ? (
+              <Image 
+                source={{ uri: user.profile_picture }} 
+                style={styles.profileImage}
+              />
+            ) : (
+              <View style={styles.placeholderImage}>
+                <Text style={styles.placeholderText}>
+                  {user.name?.charAt(0).toUpperCase()}
+                </Text>
+              </View>
+            )}
+            
             <Text style={styles.userName}>{user.name}</Text>
             <Text style={styles.userEmail}>{user.email}</Text>
           </View>

@@ -5,25 +5,26 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface LoginScreenProps {
-  onLogin: (email: string, password: string) => void;
+  onLogin: (email: string, password: string) => Promise<void>;
   onNavigateToRegister: () => void;
   onBack: () => void;
 }
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ 
-  onLogin, 
-  onNavigateToRegister, 
-  onBack 
+const LoginScreen: React.FC<LoginScreenProps> = ({
+  onLogin,
+  onNavigateToRegister,
+  onBack
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
@@ -34,7 +35,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
       return;
     }
 
-    onLogin(email, password);
+    setIsLoading(true);
+    try {
+      await onLogin(email, password);
+    } catch (error) {
+      // Error handling is done in the parent component
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -66,12 +74,18 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
             autoComplete="password"
           />
 
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Login</Text>
+          <TouchableOpacity
+            style={[styles.button, isLoading && styles.buttonDisabled]}
+            onPress={handleLogin}
+            disabled={isLoading}
+          >
+            <Text style={styles.buttonText}>
+              {isLoading ? 'Logging in...' : 'Login'}
+            </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={styles.linkButton} 
+          <TouchableOpacity
+            style={styles.linkButton}
             onPress={onNavigateToRegister}
           >
             <Text style={styles.linkText}>
@@ -80,8 +94,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
-  );
+    </SafeAreaView>);
 };
 
 const styles = StyleSheet.create({
@@ -131,6 +144,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  buttonDisabled: {
+    backgroundColor: '#cccccc',
   },
   linkButton: {
     marginTop: 20,

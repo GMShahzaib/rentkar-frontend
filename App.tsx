@@ -1,16 +1,12 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Alert } from 'react-native';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import HomeScreen from './screens/HomeScreen';
+import { authService, User } from './services/api/AuthService';
+import { SecureStorageService } from './services/secureStorageService';
 
 type Screen = 'home' | 'login' | 'register';
-
-interface User {
-  email: string;
-  name: string;
-  profilePicture?: string;
-}
 
 const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
@@ -20,20 +16,39 @@ const App: React.FC = () => {
     setCurrentScreen(screen);
   };
 
-  const handleLogin = (email: string, password: string) => {
-    // Simple mock login - in real app, validate with backend
-    setUser({ email, name: 'User' });
-    setCurrentScreen('home');
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      const response = await authService.login({ email, password });
+      if (response.success && response.data) {
+        SecureStorageService.saveItem('token', response.data.data.accessToken);
+        setUser(response.data.data.user);
+        setCurrentScreen('home');
+      } else {
+        Alert.alert('Login Failed', response.message || 'Invalid credentials');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    }
   };
 
-  const handleRegister = (data: { email: string; password: string; name: string; profilePicture?: string }) => {
-    // Simple mock register - in real app, send to backend
-    setUser({ 
-      email: data.email, 
-      name: data.name, 
-      profilePicture: data.profilePicture 
-    });
-    setCurrentScreen('home');
+  const handleRegister = async (data: { email: string; password: string; name: string; profilePicture?: string }) => {
+    try {
+      const response = await authService.register({
+        email: data.email,
+        password: data.password,
+        name: data.name,
+        profile_picture: data.profilePicture,
+      });
+      if (response.success && response.data) {
+        SecureStorageService.saveItem('token', response.data.data.accessToken);
+        setUser(response.data.data.user);
+        setCurrentScreen('home');
+      } else {
+        Alert.alert('Registration Failed', response.message || 'Could not create account');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    }
   };
 
   const handleLogout = () => {
@@ -45,7 +60,7 @@ const App: React.FC = () => {
     switch (currentScreen) {
       case 'login':
         return (
-          <LoginScreen 
+          <LoginScreen
             onLogin={handleLogin}
             onNavigateToRegister={() => navigateTo('register')}
             onBack={() => navigateTo('home')}
@@ -53,7 +68,7 @@ const App: React.FC = () => {
         );
       case 'register':
         return (
-          <RegisterScreen 
+          <RegisterScreen
             onRegister={handleRegister}
             onNavigateToLogin={() => navigateTo('login')}
             onBack={() => navigateTo('home')}
@@ -61,7 +76,7 @@ const App: React.FC = () => {
         );
       default:
         return (
-          <HomeScreen 
+          <HomeScreen
             user={user}
             onNavigateToLogin={() => navigateTo('login')}
             onNavigateToRegister={() => navigateTo('register')}
