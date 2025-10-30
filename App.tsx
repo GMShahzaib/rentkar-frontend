@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
-import HomeScreen from './screens/HomeScreen';
+import MyStoreScreen from './screens/MyStoreScreen';
 import { authService, User } from './services/api/AuthService';
 import { SecureStorageService } from './services/secureStorageService';
 
-type Screen = 'home' | 'login' | 'register';
+const Stack = createNativeStackNavigator();
 
 const App: React.FC = () => {
-  const [currentScreen, setCurrentScreen] = useState<Screen>('home');
   const [user, setUser] = useState<User | null>(null);
-
-  const navigateTo = (screen: Screen) => {
-    setCurrentScreen(screen);
-  };
 
   const handleLogin = async (email: string, password: string) => {
     try {
@@ -22,11 +21,10 @@ const App: React.FC = () => {
       if (response.success && response.data) {
         SecureStorageService.saveItem('token', response.data.data.accessToken);
         setUser(response.data.data.user);
-        setCurrentScreen('home');
       } else {
         Alert.alert('Login Failed', response.message || 'Invalid credentials');
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Something went wrong. Please try again.');
     }
   };
@@ -42,62 +40,79 @@ const App: React.FC = () => {
       if (response.success && response.data) {
         SecureStorageService.saveItem('token', response.data.data.accessToken);
         setUser(response.data.data.user);
-        setCurrentScreen('home');
       } else {
         Alert.alert('Registration Failed', response.message || 'Could not create account');
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Something went wrong. Please try again.');
     }
   };
 
   const handleLogout = () => {
     setUser(null);
-    setCurrentScreen('home');
-  };
-
-  const renderScreen = () => {
-    switch (currentScreen) {
-      case 'login':
-        return (
-          <LoginScreen
-            onLogin={handleLogin}
-            onNavigateToRegister={() => navigateTo('register')}
-            onBack={() => navigateTo('home')}
-          />
-        );
-      case 'register':
-        return (
-          <RegisterScreen
-            onRegister={handleRegister}
-            onNavigateToLogin={() => navigateTo('login')}
-            onBack={() => navigateTo('home')}
-          />
-        );
-      default:
-        return (
-          <HomeScreen
-            user={user}
-            onNavigateToLogin={() => navigateTo('login')}
-            onNavigateToRegister={() => navigateTo('register')}
-            onLogout={handleLogout}
-          />
-        );
-    }
+    SecureStorageService.deleteItem('token');
   };
 
   return (
-    <View style={styles.container}>
-      {renderScreen()}
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+        
+        
+        <Stack.Screen name="Home">
+          {(props) => (
+            <HomeScreen
+              {...props}
+              user={user}
+              onNavigateToLogin={() => props.navigation.navigate('Login')}
+              onNavigateToRegister={() => props.navigation.navigate('Register')}
+              onNavigateToMyStore={() => props.navigation.navigate('MyStore')}
+              onLogout={handleLogout}
+            />
+          )}
+        </Stack.Screen>
+
+    
+        <Stack.Screen name="Login">
+          {(props) => (
+            <LoginScreen
+              {...props}
+              onLogin={handleLogin}
+              onNavigateToRegister={() => props.navigation.navigate('Register')}
+              onBack={() => props.navigation.goBack()}
+            />
+          )}
+        </Stack.Screen>
+
+  
+        <Stack.Screen name="Register">
+          {(props) => (
+            <RegisterScreen
+              {...props}
+              onRegister={handleRegister}
+              onNavigateToLogin={() => props.navigation.navigate('Login')}
+              onBack={() => props.navigation.goBack()}
+            />
+          )}
+        </Stack.Screen>
+
+        
+        <Stack.Screen name="MyStore">
+          {(props) => (
+            <MyStoreScreen
+              {...props}
+              user={user}
+              onBack={() => props.navigation.goBack()}
+            />
+          )}
+        </Stack.Screen>
+
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
+  container: { flex: 1, backgroundColor: '#fff' },
 });
 
 export default App;
