@@ -33,7 +33,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   if (user) {
     return (
       <SafeAreaView style={styles.container}>
-        {/* Header */}
+      
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Home</Text>
           <TouchableOpacity onPress={toggleMenu}>
@@ -41,7 +41,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           </TouchableOpacity>
         </View>
 
-        {/* Dropdown Menu */}
+        
         <Modal
           visible={menuVisible}
           transparent
@@ -62,7 +62,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                 style={styles.menuItem}
                 onPress={() => {
                   toggleMenu();
-                  onNavigateToMyStore(); // ✅ navigate to My Store screen
+                  onNavigateToMyStore();
                 }}
               >
                 <Text style={styles.menuText}>My Store</Text>
@@ -81,7 +81,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           </TouchableOpacity>
         </Modal>
 
-        {/* Main Content */}
+      
         <View style={styles.content}>
           <Text style={styles.title}>Welcome Home!</Text>
 
@@ -107,7 +107,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
     );
   }
 
-  // Guest View (not logged in)
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
