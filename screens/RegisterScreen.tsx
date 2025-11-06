@@ -1,14 +1,7 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  ScrollView,
-} from 'react-native';
+import { StyleSheet, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Text, TextInput, Button } from 'react-native-paper';
 
 interface RegisterScreenProps {
   onRegister: (data: {
@@ -22,7 +15,7 @@ interface RegisterScreenProps {
 
 const RegisterScreen: React.FC<RegisterScreenProps> = ({
   onRegister,
-  navigation
+  navigation,
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,21 +24,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!email || !password || !name) {
-      Alert.alert('Error', 'Please fill in all required fields');
-      return;
-    }
-
-    if (!email.includes('@')) {
-      Alert.alert('Error', 'Please enter a valid email');
-      return;
-    }
-
-    if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters');
-      return;
-    }
-
+    if (!email || !password || !name) return;
     setIsLoading(true);
     try {
       await onRegister({
@@ -54,8 +33,6 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({
         name,
         profilePicture: profilePicture || undefined,
       });
-    } catch (error) {
-      // Error handling is done in the parent component
     } finally {
       setIsLoading(false);
     }
@@ -63,129 +40,79 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.content}>
-        <Text style={styles.title}>Register</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Text variant="headlineLarge" style={styles.title}>
+          Register
+        </Text>
 
         <View style={styles.form}>
           <TextInput
-            style={styles.input}
-            placeholder="Name *"
+            label="Name *"
             value={name}
             onChangeText={setName}
             autoComplete="name"
+            style={styles.input}
           />
 
           <TextInput
-            style={styles.input}
-            placeholder="Email *"
+            label="Email *"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
             autoComplete="email"
+            style={styles.input}
           />
 
           <TextInput
-            style={styles.input}
-            placeholder="Password *"
+            label="Password *"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
             autoComplete="password"
+            style={styles.input}
           />
 
           <TextInput
-            style={styles.input}
-            placeholder="Profile Picture URL (optional)"
+            label="Profile Picture URL (optional)"
             value={profilePicture}
             onChangeText={setProfilePicture}
-            autoCapitalize="none"
             keyboardType="url"
+            autoCapitalize="none"
+            style={styles.input}
           />
 
-          <TouchableOpacity
-            style={[styles.button, isLoading && styles.buttonDisabled]}
+          <Button
+            mode="contained"
             onPress={handleRegister}
+            loading={isLoading}
             disabled={isLoading}
+            style={styles.button}
           >
-            <Text style={styles.buttonText}>
-              {isLoading ? 'Creating Account...' : 'Register'}
-            </Text>
-          </TouchableOpacity>
+            {isLoading ? 'Creating Account...' : 'Register'}
+          </Button>
 
-          <TouchableOpacity
-            style={styles.linkButton}
+          <Button
+            mode="text"
             onPress={() => navigation.navigate('Login')}
+            style={styles.linkButton}
           >
-            <Text style={styles.linkText}>
-              Already have an account? Login
-            </Text>
-          </TouchableOpacity>
+            Already have an account? Login
+          </Button>
         </View>
       </ScrollView>
-    </SafeAreaView>);
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
-  backButton: {
-    marginBottom: 20,
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: '#007AFF',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 40,
-    color: '#333',
-  },
-  form: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingBottom: 50,
-  },
-  input: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 15,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-    padding: 15,
-    marginTop: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  buttonDisabled: {
-    backgroundColor: '#cccccc',
-  },
-  linkButton: {
-    marginTop: 20,
-  },
-  linkText: {
-    color: '#007AFF',
-    fontSize: 16,
-    textAlign: 'center',
-  },
+  container: { flex: 1 },
+  scrollContent: { padding: 20, flexGrow: 1, justifyContent: 'center' },
+  title: { textAlign: 'center', marginBottom: 30 },
+  form: { flex: 1 },
+  input: { marginBottom: 15 },
+  button: { marginTop: 10 },
+  linkButton: { marginTop: 20 },
 });
 
 export default RegisterScreen;
