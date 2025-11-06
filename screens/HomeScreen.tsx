@@ -4,21 +4,18 @@ import { View, Image, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, Button, Card, Avatar, useTheme } from 'react-native-paper';
 import { User } from '../services/api/AuthService';
+import { useAuth } from '../hooks/useAuth';
 
 interface HomeScreenProps {
-  user: User | null;
-  onNavigateToLogin: () => void;
-  onNavigateToRegister: () => void;
-  onLogout: () => void;
+  navigation: any;
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({
-  user,
-  onNavigateToLogin,
-  onNavigateToRegister,
-  onLogout,
+  navigation,
 }) => {
   const { colors } = useTheme();
+  const { user, logout } = useAuth();
+
   if (user) {
     return (
       <SafeAreaView style={styles.container}>
@@ -49,7 +46,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           <Button
             mode="contained"
             buttonColor={colors.error}
-            onPress={onLogout}
+            onPress={logout}
             style={styles.logoutButton}
           >
             Logout
@@ -70,10 +67,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         </Text>
 
         <View style={styles.buttonContainer}>
-          <Button mode="contained" onPress={onNavigateToLogin}>
+          <Button mode="contained" onPress={() => navigation.navigate('Login')}>
             Login
           </Button>
-          <Button mode="outlined" onPress={onNavigateToRegister} style={{ marginTop: 10 }}>
+          <Button mode="outlined" onPress={() => navigation.navigate('Register')} style={{ marginTop: 10 }}>
             Register
           </Button>
         </View>

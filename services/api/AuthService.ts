@@ -35,13 +35,13 @@ export interface RegisterResponse {
 
 
 class AuthService extends ApiService {
-  async login(credentials: LoginRequest): Promise<ApiResponse<LoginResponse>> {
-    return this.post<LoginResponse>('/auth/login', credentials);
-  }
+    async login(credentials: LoginRequest): Promise<ApiResponse<LoginResponse>> {
+        return this.post<LoginResponse>('/auth/login', credentials);
+    }
 
-  async register(userData: RegisterRequest): Promise<ApiResponse<RegisterResponse>> {
-    return this.post<RegisterResponse>('/auth/register', userData);
-  }
+    async register(userData: RegisterRequest): Promise<ApiResponse<RegisterResponse>> {
+        return this.post<RegisterResponse>('/auth/register', userData);
+    }
 }
 
 export const authService = new AuthService();

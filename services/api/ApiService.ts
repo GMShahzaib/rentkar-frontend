@@ -22,6 +22,7 @@ class ApiService {
     this.api.interceptors.response.use(
       (response) => response,
       (error) => {
+        console.log('API Error Interceptor:', error);
         const message =
           error.response?.data?.message || 'Network error. Please try again.';
         return Promise.reject(new Error(message));

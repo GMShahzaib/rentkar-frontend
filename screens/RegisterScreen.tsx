@@ -2,19 +2,13 @@ import React, { useState } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, TextInput, Button } from 'react-native-paper';
+import { useAuth } from '../hooks/useAuth';
 
 interface RegisterScreenProps {
-  onRegister: (data: {
-    email: string;
-    password: string;
-    name: string;
-    profilePicture?: string;
-  }) => Promise<void>;
   navigation: any;
 }
 
 const RegisterScreen: React.FC<RegisterScreenProps> = ({
-  onRegister,
   navigation,
 }) => {
   const [email, setEmail] = useState('');
@@ -22,21 +16,25 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({
   const [name, setName] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { register } = useAuth();
+
+
 
   const handleRegister = async () => {
     if (!email || !password || !name) return;
     setIsLoading(true);
     try {
-      await onRegister({
+      await register({
         email,
         password,
         name,
         profilePicture: profilePicture || undefined,
-      });
+      }, navigation);
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <SafeAreaView style={styles.container}>

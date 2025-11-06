@@ -20,12 +20,12 @@ export const SecureStorageService = {
     }
   },
 
-  // Delete item
-  deleteItem: async (key: string): Promise<void> => {
+  // Remove item
+  removeItem: async (key: string): Promise<void> => {
     try {
       await SecureStore.deleteItemAsync(key);
     } catch (e) {
-      console.error(`Error deleting ${key}`, e);
+      console.error(`Error removing ${key}`, e);
     }
   },
 };

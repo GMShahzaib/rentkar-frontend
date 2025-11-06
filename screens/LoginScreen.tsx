@@ -2,26 +2,29 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, TextInput, Button } from 'react-native-paper';
+import { useAuth } from '../hooks/useAuth';
 
 interface LoginScreenProps {
-  onLogin: (email: string, password: string) => Promise<void>;
   navigation: any;
 }
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin, navigation }) => {
+const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
 
   const handleLogin = async () => {
     if (!email || !password) return;
     setIsLoading(true);
     try {
-      await onLogin(email, password);
+      await login(email, password, navigation);
     } finally {
       setIsLoading(false);
     }
   };
+
+
 
   return (
     <SafeAreaView style={styles.container}>
