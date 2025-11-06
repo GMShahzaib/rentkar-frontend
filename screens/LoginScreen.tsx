@@ -11,14 +11,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface LoginScreenProps {
   onLogin: (email: string, password: string) => Promise<void>;
-  onNavigateToRegister: () => void;
-  onBack: () => void;
+  navigation: any;
+
 }
 
 const LoginScreen: React.FC<LoginScreenProps> = ({
   onLogin,
-  onNavigateToRegister,
-  onBack
+  navigation
+
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -48,10 +48,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <Text style={styles.backButtonText}>← Back</Text>
-        </TouchableOpacity>
-
         <Text style={styles.title}>Login</Text>
 
         <View style={styles.form}>
@@ -86,7 +82,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({
 
           <TouchableOpacity
             style={styles.linkButton}
-            onPress={onNavigateToRegister}
+            onPress={() => navigation.navigate('Register')}
           >
             <Text style={styles.linkText}>
               Don't have an account? Register

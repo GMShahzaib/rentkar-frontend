@@ -17,14 +17,12 @@ interface RegisterScreenProps {
     name: string;
     profilePicture?: string;
   }) => Promise<void>;
-  onNavigateToLogin: () => void;
-  onBack: () => void;
+  navigation: any;
 }
 
 const RegisterScreen: React.FC<RegisterScreenProps> = ({
   onRegister,
-  onNavigateToLogin,
-  onBack
+  navigation
 }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -66,10 +64,6 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.content}>
-        <TouchableOpacity style={styles.backButton} onPress={onBack}>
-          <Text style={styles.backButtonText}>← Back</Text>
-        </TouchableOpacity>
-
         <Text style={styles.title}>Register</Text>
 
         <View style={styles.form}>
@@ -121,7 +115,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({
 
           <TouchableOpacity
             style={styles.linkButton}
-            onPress={onNavigateToLogin}
+            onPress={() => navigation.navigate('Login')}
           >
             <Text style={styles.linkText}>
               Already have an account? Login
