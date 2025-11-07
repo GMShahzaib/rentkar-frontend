@@ -1,4 +1,3 @@
-// src/hooks/useAuth.tsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { authService } from '../services/api/AuthService';
@@ -30,7 +29,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user on mount (if token exists)
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);
@@ -118,5 +116,4 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-// Hook for consuming context
 export const useAuth = () => useContext(AuthContext);

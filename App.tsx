@@ -1,4 +1,3 @@
-// App.tsx
 import * as React from 'react';
 import { NavigationContainer, DefaultTheme as NavigationDefaultTheme, DarkTheme as NavigationDarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -9,7 +8,6 @@ import RegisterScreen from './screens/RegisterScreen';
 import HomeScreen from './screens/HomeScreen';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 
-// Combine themes from Paper + Navigation
 const CombinedDefaultTheme = merge(MD3LightTheme, NavigationDefaultTheme);
 const CombinedDarkTheme = merge(MD3DarkTheme, NavigationDarkTheme);
 
