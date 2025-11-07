@@ -20,10 +20,10 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  login: async () => {},
-  register: async () => {},
-  logout: async () => {},
-  reloadUser: async () => {},
+  login: async () => { },
+  register: async () => { },
+  logout: async () => { },
+  reloadUser: async () => { },
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -35,18 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const fetchUser = async () => {
       setLoading(true);
       const token = await SecureStorageService.getItem('token');
-      if (token) {
-        try {
-          const response = await userService.getMe();
-          if (response.success && response.data) {
-            setUser(response.data.data.user);
-          } else {
-            setUser(null);
-          }
-        } catch {
-          setUser(null);
-        }
-      }
+      if (token) await reloadUser();
       setLoading(false);
     };
     fetchUser();

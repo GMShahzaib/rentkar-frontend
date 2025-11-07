@@ -3,9 +3,9 @@ import { BASE_URL } from './config';
 import { SecureStorageService } from '../secureStorageService';
 
 export interface ApiResponse<T> {
-    success: boolean;
-    data?: T;
-    message?: string;
+  success: boolean;
+  data?: T;
+  message?: string;
 }
 class ApiService {
   protected api: AxiosInstance;
@@ -21,8 +21,14 @@ class ApiService {
 
     this.api.interceptors.response.use(
       (response) => response,
-      (error) => {
+      async (error) => {
         console.log('API Error Interceptor:', error);
+
+        if (error.response && error.response.status === 401) {
+          console.warn('Unauthorized! Removing token...');
+          await SecureStorageService.removeItem('token'); // or SecureStorageService.clear() if you want to clear all
+        }
+
         const message =
           error.response?.data?.message || 'Network error. Please try again.';
         return Promise.reject(new Error(message));
