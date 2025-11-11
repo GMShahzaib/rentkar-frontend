@@ -7,6 +7,8 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import HomeScreen from './screens/HomeScreen';
 import { AuthProvider, useAuth } from './hooks/useAuth';
+import ProfileScreen from './screens/ProfileScreen';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const CombinedDefaultTheme = merge(MD3LightTheme, NavigationDefaultTheme);
 const CombinedDarkTheme = merge(MD3DarkTheme, NavigationDarkTheme);
@@ -23,6 +25,16 @@ function AppNavigator() {
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen
+        name="Profile"
+        options={{ title: 'Profile' }}
+      >
+        {({ navigation }) => (
+          <ProtectedRoute navigation={navigation}>
+            <ProfileScreen navigation={navigation} />
+          </ProtectedRoute>
+        )}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }
